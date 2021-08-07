@@ -1,11 +1,19 @@
+use clap::Clap;
 use image::{Pixel, Rgba};
 use std::cmp::Ordering;
 use std::collections::HashSet;
-use std::env;
+
+#[derive(Clap)]
+struct Opts {
+    image: String,
+    #[clap(long)]
+    hex: bool,
+}
 
 fn main() {
-    let path = env::args().nth(1).expect("Target image is required.");
-    let image = image::open(&path)
+    let opts: Opts = Opts::parse();
+
+    let image = image::open(&opts.image)
         .expect("Failed to open the image.")
         .to_rgba8();
     let mut pixels = image
