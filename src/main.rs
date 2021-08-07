@@ -8,19 +8,27 @@ struct Opts {
     image: String,
     #[clap(long)]
     hex: bool,
+    #[clap(long)]
+    alpha: bool,
 }
 
 fn main() {
     let opts: Opts = Opts::parse();
 
-    let image = image::open(&opts.image)
-        .expect("Failed to open the image.")
-        .to_rgba8();
+    let raw = image::open(&opts.image).expect("Failed to open the image.");
+
+    let rgba = raw.to_rgba8();
+    let rgb = raw.to_rgb8();
+    let image = if opts.alpha {
+        rgba.pixels().map(|v| v.channels()).collect::<Vec<_>>()
+    } else {
+        rgb.pixels().map(|v| v.channels()).collect::<Vec<_>>()
+    };
+
     let mut pixels = image
-        .pixels()
+        .into_iter()
         .collect::<HashSet<_>>()
         .into_iter()
-        .map(|v| v.channels())
         .collect::<Vec<_>>();
     pixels.sort_by(|a, b| cmp_rgba(a, b));
 
