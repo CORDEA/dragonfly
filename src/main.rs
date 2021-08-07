@@ -24,7 +24,15 @@ fn main() {
     pixels.sort_by(|a, b| cmp_rgba(a, b));
 
     for pixel in pixels {
-        println!("({}, {}, {}, {})", pixel[0], pixel[1], pixel[2], pixel[3]);
+        println!(
+            "({})",
+            pixel
+                .channels()
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
     }
 }
 
